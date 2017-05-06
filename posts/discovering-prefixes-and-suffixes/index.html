@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Discovering Prefixes and Suffixes -- gaoyuan</title>
+        
+        <link rel="stylesheet" href="../../fonts/Serif/cmun-serif.css" />
+        <link rel="stylesheet" href="../../fonts/Serif-Slanted/cmun-serif-slanted.css" />
+
+        <!--BOOTSTRAP-->
+        <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <!--mobile first-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!--removed html from url but still is html-->
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+        <!--font awesome-->
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+        <link href="../../css/default.css" rel="stylesheet">
+
+        <link href="../../comments/inlineDisqussions.css" rel="stylesheet">
+
+        <!--Highlight-->
+        <link href="../../highlight/styles/github.css" rel="stylesheet">
+        
+        <!--Favicon-->
+        <link rel="apple-touch-icon" sizes="57x57" href="../../favicon/apple-touch-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="../../favicon/apple-touch-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="../../favicon/apple-touch-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="../../favicon/apple-touch-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="../../favicon/apple-touch-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="../../favicon/apple-touch-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="../../favicon/apple-touch-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="../../favicon/apple-touch-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="../../favicon/apple-touch-icon-180x180.png">
+        <link rel="icon" type="image/png" href="../../favicon/favicon-32x32.png" sizes="32x32">
+        <link rel="icon" type="image/png" href="../../favicon/android-chrome-192x192.png" sizes="192x192">
+        <link rel="icon" type="image/png" href="../../favicon/favicon-96x96.png" sizes="96x96">
+        <link rel="icon" type="image/png" href="../../favicon/favicon-16x16.png" sizes="16x16">
+        <link rel="manifest" href="../../favicon/manifest.json">
+        <link rel="mask-icon" href="../../favicon/safari-pinned-tab.svg" color="#5bbad5">
+        <link rel="shortcut icon" href="../../favicon/favicon.ico">
+        <meta name="msapplication-TileColor" content="#da532c">
+        <meta name="msapplication-TileImage" content="/favicon/mstile-144x144.png">
+        <meta name="msapplication-config" content="/favicon/browserconfig.xml">
+        <meta name="theme-color" content="#ffffff">
+
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-98335088-1', 'auto');
+        ga('send', 'pageview');
+        </script>
+
+    </head>
+
+    <body>
+        <div id="wrap">
+            
+            <div id="content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8">
+
+                            <h1><a href="../../">高远</a><div id="contact"><a href="http://www.linkedin.com/in/gaoyuanuw" title="LinkedIn"><i class="fa fa-linkedin-square"></i></a> <a href="http://github.com/gaoyuan" title="Github"><i class="fa fa-github-square"></i></a></div></h1>
+                            
+                            <div class="article">
+                                <h1>Discovering Prefixes and Suffixes</h1>
+                                <div class="info">
+    <p style="font-family:CMSS; font-size:120%">Posted on September 25, 2012</p>
+    language, text processing, morphology, coding, unix, shell script
+    <!--
+        by gaoyuan
+    -->
+</div>
+</br>
+
+<p>English is a language that has a concatinative morphology. For example, the word <em>preinstallation</em> can be split into three parts – a prefix <em>pre</em>, a stem <em>install</em> and a suffix <em>ation</em>. Given a corpus of english words, how do we discover the prefixes and suffixes computationally? This is an interesting question, for we can use similar methods to analyze other languages that also share a concatinative morphology.</p>
+<p>The corpus of english words can be represented by a forward tree (and a backward tree). The root of the forward tree is the token that denotes the start of word. Each node in the tree corresponds to a character. A word in the corpus is therefore a path starting from the root. Similarly, for the backward tree, the root is the end of word token. A path starting from the root corresponds to a word reading backwards.</p>
+<p>After building this tree representation, we can calculate the frequency of each node, which is defined as the frequency of the path starting from the root to that node. Since prefixes (or suffixes) tend to appear more often, high frequency candidates are more likely to be considered prefixes (or suffixes) given a fixed character sequence length, or equivalently, a fixed depth in the tree. For instance, for a forward tree, we sort the candidates with tree depth 5 (word length 4) by their frequencies, we get</p>
+<blockquote>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">           </th>
+<th style="text-align: left;"> </th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">OVER</td>
+<td style="text-align: left;">378</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">INTE</td>
+<td style="text-align: left;">338</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">COMP</td>
+<td style="text-align: left;">233</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CONS</td>
+<td style="text-align: left;">212</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">UNDE</td>
+<td style="text-align: left;">205</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TRAN</td>
+<td style="text-align: left;">183</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CONT</td>
+<td style="text-align: left;">179</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STRA</td>
+<td style="text-align: left;">150</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">COMM</td>
+<td style="text-align: left;">142</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PRES</td>
+<td style="text-align: left;">133</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">…</td>
+<td style="text-align: left;">…</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p>It seems that we can capture some prefixes solely by their frequencies. The guy on the top of the list – <em>OVER</em> is a common prefix. However, a lot of the high frequency stuff are not actually prefixes, like <em>INTE</em> and <em>UNDE</em>. Why do they have a high frequency though? That is because <em>INTER</em> and <em>UNDER</em> are prefixes. So high frequency itself is not a sufficient criterion for a prefix.</p>
+<p>It turns out we can eliminate the bad ones by the distribution of their children. For all the characters following <em>INTE</em>, most of their occurancies should be <em>R</em>, therefore the distribution of the children of <em>INTE</em> should be highly biased. A measure that people usually use to discribe this is called <strong>Entropy</strong>. It is defined as <span class="math inline">\(-\sum_ip_i \ln p_i\)</span>, where <span class="math inline">\(p_i\)</span> is the probability of the i-th child. A high entropy implies the children are evenly distributed. Node with a high entropy is evidence for a good cut between prefix and stem. That is because varies stems can be attached to the same prefix, so the character following the prefix is rather chaotic.</p>
+<p>It turns out there exists some cases where the boundary of a prefix or suffix does not have a high entropy. The suffix <em>-ing</em> is a good example. Unfortunately, <em>ling</em> appears more often than other <em>-ing</em>’s, like <em>ting</em> or <em>ming</em>. Therefore if you look at <em>ing</em>, it doesn’t have a very high entropy. Combining the frequency and entropy criterions helps a lot, but there are still some corner cases.</p>
+<p>What if we print the frequency and entropy path of each candidate? Below we selected some of the top depth-6 candidates that have both high frequencies and high entropies. We print the frequency and entropy path of each candidate:</p>
+<blockquote>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">candidate  </th>
+<th style="text-align: left;">freq  </th>
+<th style="text-align: left;">entropy</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">I N T E R</td>
+<td style="text-align: left;">275</td>
+<td style="text-align: left;">2.71212</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">I N T E</td>
+<td style="text-align: left;">338</td>
+<td style="text-align: left;">0.745482</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">I N T</td>
+<td style="text-align: left;">439</td>
+<td style="text-align: left;">0.818788</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">I N</td>
+<td style="text-align: left;">1663</td>
+<td style="text-align: left;">2.41109</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">2849</td>
+<td style="text-align: left;">1.64657</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">M I C R O</td>
+<td style="text-align: left;">87</td>
+<td style="text-align: left;">2.63535</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">M I C R</td>
+<td style="text-align: left;">87</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">M I C</td>
+<td style="text-align: left;">179</td>
+<td style="text-align: left;">1.33012</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">M I</td>
+<td style="text-align: left;">1377</td>
+<td style="text-align: left;">2.23578</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">8424</td>
+<td style="text-align: left;">1.7602</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">U N D E R</td>
+<td style="text-align: left;">187</td>
+<td style="text-align: left;">2.67801</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">U N D E</td>
+<td style="text-align: left;">205</td>
+<td style="text-align: left;">0.466284</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">U N D</td>
+<td style="text-align: left;">247</td>
+<td style="text-align: left;">0.711374</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">U N</td>
+<td style="text-align: left;">1109</td>
+<td style="text-align: left;">2.68328</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">1608</td>
+<td style="text-align: left;">1.33352</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">W A T E R</td>
+<td style="text-align: left;">51</td>
+<td style="text-align: left;">2.52729</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">W A T E</td>
+<td style="text-align: left;">51</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">W A T</td>
+<td style="text-align: left;">99</td>
+<td style="text-align: left;">1.67263</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">W A</td>
+<td style="text-align: left;">854</td>
+<td style="text-align: left;">2.45031</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">W</td>
+<td style="text-align: left;">3543</td>
+<td style="text-align: left;">1.7672</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p>The feature becomes clear – a prefix should be one such that its parent has a low entropy and itself has a high entropy. The same applies to suffixes. Now if we look at the entropy path of <em>ing</em>, we find</p>
+<blockquote>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">candidate  </th>
+<th style="text-align: left;">entropy</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">ING</td>
+<td style="text-align: left;">2.66174</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NG</td>
+<td style="text-align: left;">0.282628</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">G</td>
+<td style="text-align: left;">0.646555</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p>Since <em>NG</em> has a low entropy and <em>ING</em> has a high entropy, it becomes clear that <em>ING</em> should be a suffix.</p>
+<p>The experiment above uses the corpus <a href="http://www.speech.cs.cmu.edu/cgi-bin/cmudict">CMU Pronouncing Dictionary</a>. Below is the shell script to generate the frequencies and entropies for the forward and backward tree. It uses <em>ngram-count</em>, the tool from <a href="http://www.speech.sri.com/projects/srilm/download.html">SRILM</a> that generates all the ngrams based on the training text.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">\#!<span class="kw">/bin/sh</span>
+\#<span class="kw">--Generate</span> frequency and entropy for forward<span class="kw">&amp;backward</span> tree.--
+\# == <span class="kw">parameters</span> ==
+<span class="ot">DICT=</span>../data/cmudict.0.7a.txt
+<span class="ot">ORDER=</span>7
+\# == <span class="kw">function</span><span class="fu"> ngramFrequencyEntropy</span> ==
+\# <span class="kw">Generate</span> 1-<span class="ot">$2</span> order grams with frequency and entropy
+\# <span class="ot">$1</span> <span class="kw">:</span> file name
+\# <span class="ot">$2</span> <span class="kw">:</span> order
+<span class="fu">ngramFrequencyEntropy()</span><span class="kw">{</span>
+  <span class="ot">CMD=</span><span class="st">&quot;ngram-count -text </span><span class="ot">$1</span><span class="st"> -order </span><span class="ot">$2</span><span class="st">&quot;</span>
+  <span class="kw">for</span> <span class="kw">((</span> i = 1; i &lt;= <span class="ot">$2</span>; i ++ <span class="kw">))</span>; <span class="kw">do</span>
+    <span class="ot">CMD=$CMD</span><span class="st">&quot; -write</span><span class="ot">$i</span><span class="st"> </span><span class="ot">$1</span><span class="st">.ORDER</span><span class="ot">$i</span><span class="st">&quot;</span>
+  <span class="kw">done</span>
+  <span class="kw">eval</span> <span class="ot">$CMD</span>
+  <span class="kw">for</span> <span class="kw">((</span> i = 1; i &lt;= <span class="ot">$2</span>; i ++ <span class="kw">))</span>; <span class="kw">do</span>
+    <span class="kw">grep</span> <span class="st">'^\&lt;s\&gt;'</span> <span class="ot">$1</span>.ORDER<span class="ot">$i</span> <span class="kw">&gt;</span> <span class="ot">$1</span>.ORDER<span class="ot">$i</span>.PRE
+  <span class="kw">done</span>  
+  <span class="kw">eval</span> <span class="st">&quot;cat </span><span class="ot">$1</span><span class="st">.ORDER[1-</span><span class="ot">$(($ORDER</span>-1<span class="ot">))</span><span class="st">].PRE &gt; </span><span class="ot">$3</span><span class="st">&quot;</span> \# cat all the prefixes
+  \# <span class="kw">add</span> the entropy of each node
+  <span class="ot">LINENUM=</span>1
+  <span class="ot">AWKCMD=</span><span class="st">'{sum+=$NF; a[++i]=$NF } END '</span> \# <span class="kw">simply</span> because its too long...
+  <span class="ot">AWKCMD+=</span><span class="st">'{ for(j=1;j&lt;=i;j++) {p = a[j]/sum; entropy += -p\*log(p)} } END '</span>
+  <span class="ot">AWKCMD+=</span><span class="st">'{print entropy}'</span>
+  <span class="kw">for</span> <span class="kw">((</span> i = 1; i &lt; <span class="ot">$2</span>; i ++ <span class="kw">))</span>; <span class="kw">do</span>
+    <span class="kw">while</span> <span class="ot">IFS=</span> <span class="kw">read</span> -r <span class="ot">line</span>; <span class="kw">do</span> 
+      <span class="ot">ENTROPY=</span><span class="kw">`echo</span> <span class="st">&quot;</span><span class="ot">$line</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="kw">rev</span> <span class="kw">|</span> <span class="kw">cut</span> -f2- <span class="kw">|</span> <span class="kw">rev</span> <span class="kw">|</span> <span class="kw">\</span>
+      <span class="kw">grep</span> -f- <span class="ot">$1</span>.ORDER<span class="ot">$(($i</span>+1<span class="ot">))</span>.PRE <span class="kw">|</span> <span class="kw">awk</span> <span class="st">&quot;</span><span class="ot">$AWKCMD</span><span class="st">&quot;</span><span class="kw">`</span>
+      <span class="kw">if [</span> <span class="st">&quot;x</span><span class="ot">$ENTROPY</span><span class="st">&quot;</span> <span class="ot">=</span> <span class="st">&quot;x&quot;</span><span class="kw"> ]</span>; <span class="kw">then</span>
+        <span class="ot">ENTROPY=</span>0
+      <span class="kw">fi</span>
+      <span class="kw">awk</span> -v ent=<span class="ot">$ENTROPY</span> -v ln=<span class="ot">$LINENUM</span> \
+      <span class="st">'{if (NR==ln) {print $0, ent} else {print $0}}'</span> <span class="ot">$3</span> <span class="kw">&gt;</span> TEMP <span class="kw">&amp;&amp;</span> <span class="kw">mv</span> TEMP <span class="ot">$3</span>
+      <span class="ot">LINENUM=$(($LINENUM</span>+1<span class="ot">))</span>
+    <span class="kw">done</span> <span class="kw">&lt;</span> <span class="ot">$1</span><span class="kw">.ORDER</span><span class="ot">$i</span>.PRE
+  <span class="kw">done</span> 
+<span class="kw">}</span>
+\# == <span class="kw">Generate</span> phoneme and grapheme suffix and prefix trees ==
+<span class="kw">echo</span> <span class="st">'Generating grapheme trees ...'</span>
+<span class="kw">sed</span> <span class="st">'/\;\;\;/d;s/  .\*//g;/[^A-Za-z]/d'</span> <span class="ot">$DICT</span> <span class="kw">|</span> <span class="kw">\</span>
+<span class="kw">uniq</span> <span class="kw">|</span> <span class="kw">sed</span> <span class="st">'s/./ &amp;/g;s/^ //'</span> <span class="kw">&gt;</span> CH \# char-only
+<span class="kw">ngramFrequencyEntropy</span> CH <span class="ot">$ORDER</span> ch.order<span class="ot">$ORDER</span>
+<span class="kw">rev</span> CH <span class="kw">&gt;</span> CH_REV
+<span class="kw">ngramFrequencyEntropy</span> CH_REV <span class="ot">$ORDER</span> ch_rev.order<span class="ot">$ORDER</span>
+<span class="kw">echo</span> <span class="st">'Generating phoneme trees ...'</span>
+<span class="kw">sed</span> <span class="st">'/\;\;\;/d;s/.\*  //g'</span> <span class="ot">$DICT</span> <span class="kw">&gt;</span> PH \# phone-only
+<span class="kw">ngramFrequencyEntropy</span> PH <span class="ot">$ORDER</span> ph.order<span class="ot">$ORDER</span>
+<span class="kw">rev</span> PH <span class="kw">&gt;</span> PH_REV
+<span class="kw">ngramFrequencyEntropy</span> PH_REV <span class="ot">$ORDER</span> ph_rev.order<span class="ot">$ORDER</span>
+\# == <span class="kw">Remove</span> temp files ==
+<span class="kw">rm</span> CH CH_REV PH PH_REV <span class="dt">\*</span>ORDER<span class="dt">\*</span></code></pre></div>
+<p>Below is the code that generates possible candidates for prefixes and suffixes by selecting those that have both high frequencies and high entropies:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">\#!<span class="kw">/bin/sh</span>
+\# <span class="kw">--</span> generate the candidates using frequency and entropy --
+\# == <span class="kw">parameters</span> ==
+<span class="ot">ORDER=</span>7
+<span class="ot">FREQ_CUTOFF=</span>50
+<span class="ot">ENTR_CUTOFF=</span>50
+<span class="fu">topFreqEntr()</span><span class="kw">{</span>
+  <span class="kw">for</span> <span class="kw">((</span> i = 3; i &lt; <span class="ot">$2</span>; i ++ <span class="kw">))</span>; <span class="kw">do</span>
+    <span class="kw">cat</span> <span class="ot">$1</span>.order<span class="ot">$i</span> <span class="kw">|</span> <span class="kw">sort</span> -k<span class="ot">$((</span>i+1<span class="ot">))</span> -r -n <span class="kw">|</span> <span class="kw">head</span> -<span class="ot">$FREQ_CUTOFF</span> <span class="kw">&gt;</span> topfreq
+    <span class="kw">cat</span> <span class="ot">$1</span>.order<span class="ot">$i</span> <span class="kw">|</span> <span class="kw">sort</span> -k<span class="ot">$((</span>i+2<span class="ot">))</span> -r -n <span class="kw">|</span> <span class="kw">head</span> -<span class="ot">$ENTR_CUTOFF</span> <span class="kw">&gt;</span> topentr
+    <span class="kw">sort</span> -o topfreq topfreq
+    <span class="kw">sort</span> -o topentr topentr
+    <span class="kw">comm</span> -12 topfreq topentr <span class="kw">|</span> <span class="kw">sed</span> <span class="st">&quot;s/^\t//g&quot;</span> <span class="dt">\&gt;</span> <span class="ot">$1</span>.order<span class="ot">$i</span>.candidates
+  <span class="kw">done</span>
+<span class="kw">}</span>
+<span class="kw">topFreqEntr</span> ch <span class="ot">$ORDER</span>
+<span class="kw">topFreqEntr</span> ph <span class="ot">$ORDER</span>
+<span class="kw">topFreqEntr</span> ch_rev <span class="ot">$ORDER</span>
+<span class="kw">topFreqEntr</span> ph_rev <span class="ot">$ORDER</span>
+\# == <span class="kw">clear</span> junk files == 
+<span class="kw">rm</span> topfreq topentr</code></pre></div>
+<p>Below is the code that prints the frequency and entropy path of candidates:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">\#!<span class="kw">/bin/sh</span>
+\# <span class="kw">--</span> print the path of the candidates --
+\# == <span class="kw">parameters</span> ==
+<span class="ot">ORDER=</span>7
+<span class="fu">printPath()</span><span class="kw">{</span>
+  <span class="kw">while</span> <span class="kw">read</span> <span class="ot">line</span>; <span class="kw">do</span>
+    <span class="ot">NUM_COL=</span><span class="kw">`expr</span> <span class="ot">$2</span> - 1<span class="kw">`</span>
+    <span class="kw">echo</span> <span class="ot">$line</span>
+    <span class="kw">while [</span> <span class="ot">$NUM_COL</span> <span class="ot">-ge</span> 2<span class="kw"> ]</span>; <span class="kw">do</span>
+      <span class="kw">echo</span> <span class="ot">$line</span> <span class="kw">|</span> <span class="kw">cut</span> -d<span class="st">' '</span> -f 1-<span class="ot">$NUM_COL</span> <span class="kw">|</span> <span class="kw">grep</span> -f- <span class="ot">$1</span>.order<span class="ot">$NUM_COL</span>
+      <span class="ot">NUM_COL=</span><span class="kw">`expr</span> <span class="ot">$NUM_COL</span> - 1<span class="kw">`</span>
+    <span class="kw">done</span>
+    <span class="kw">echo</span> <span class="st">&quot;&quot;</span>
+  <span class="kw">done</span> <span class="kw">&lt;</span> <span class="ot">$1</span><span class="kw">.order</span><span class="ot">$2</span>.candidates
+<span class="kw">}</span>
+<span class="kw">for</span> <span class="kw">((</span> i = 3; i &lt; <span class="ot">$ORDER</span>; i++ <span class="kw">))</span>; <span class="kw">do</span>
+  <span class="kw">printPath</span> ch <span class="ot">$i</span> <span class="kw">&gt;</span> ch.order<span class="ot">$i</span>.candidates.path
+  <span class="kw">printPath</span> ph <span class="ot">$i</span> <span class="kw">&gt;</span> ph.order<span class="ot">$i</span>.candidates.path
+  <span class="kw">printPath</span> ch_rev <span class="ot">$i</span> <span class="kw">&gt;</span> ch_rev.order<span class="ot">$i</span>.candidates.path
+  <span class="kw">printPath</span> ph_rev <span class="ot">$i</span> <span class="kw">&gt;</span> ph_rev.order<span class="ot">$i</span>.candidates.path
+<span class="kw">done</span></code></pre></div>
+
+<div id="disqus_thread"></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+
+<script src="../../comments/inlineDisqussions.js"></script>
+<script src="../../js/disqus.js"></script>
+
+                            </div>
+                            
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+               </div>
+               
+           </div>
+        
+    <!-- jQuery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+
+    <script src="../../bootstrap/js/bootstrap.min.js"></script>
+
+    <script src="../../highlight/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="../../js/footnotes.js"></script>
+
+    <script src="../../comments/inlineDisqussions.js"></script>
+    
+    <noscript>Enable JavaScript for footnotes, Disqus comments, and other cool stuff.</noscript>
+
+    </body>
+
+</html>
